@@ -15,6 +15,6 @@
     "vite": "^2.8.6"
   },
   "dependencies": {
-    "babylonjs": "^4.2.2"
+    "babylonjs": "^6.33.1"
   }
 }
