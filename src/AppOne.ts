@@ -14,9 +14,9 @@ export class AppOne {
 
     debug(debugOn: boolean = true) {
         if (debugOn) {
-            this.scene.debugLayer.show({ overlay: true });
+            // this.scene.debugLayer.show({ overlay: true });
         } else {
-            this.scene.debugLayer.hide();
+            // this.scene.debugLayer.hide();
         }
     }
 
@@ -35,14 +35,15 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     var scene = new BABYLON.Scene(engine);
 
     // This creates and positions a free camera (non-mesh)
-    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, -10), scene);
-    // camera.fov = 360;
+    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, -3), scene);
+    // camera.fov = 269.7;
+    // const camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 0, -10), scene);
 
     // This targets the camera to scene origin
     camera.setTarget(BABYLON.Vector3.Zero());
 
     // This attaches the camera to the canvas
-    camera.attachControl(canvas, true);
+    // camera.attachControl(canvas, true);
 
     // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
     var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
@@ -752,14 +753,14 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     // ground.material = nodeMaterial;
     plane.material = nodeMaterial;
 
-    /*
+    
     var gl = new BABYLON.GlowLayer("glow", scene, {
         mainTextureFixedSize: 512,
         blurKernelSize: 32,
     });
-    gl.intensity = 4;
+    gl.intensity = 0.05;
     gl.referenceMeshToUseItsOwnMaterial(plane);
-    */
+    
 
     /*
     var parameters = {
@@ -774,32 +775,34 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     */
 
     // Create default pipeline
-    /*
+    
     var defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", true, scene, [camera]);
+    
     var curve = new BABYLON.ColorCurves();
 
     curve.globalHue = 0; // [0, 360] same for below
-    curve.globalDensity = 100; // [-100, 100]
-    curve.globalSaturation = 100; // [-100, 100]
-
-    curve.highlightsHue = 270;
-    curve.highlightsDensity = 80;
-    curve.highlightsSaturation = 80;
-
+    curve.globalDensity = 0; // [-100, 100]
+    curve.globalSaturation = 0; // [-100, 100]
+    
+    curve.highlightsHue = 180;
+    curve.highlightsDensity = 100;
+    curve.highlightsSaturation = 100;
+    
     curve.shadowsHue = 0;
-    curve.shadowsDensity = -70;
-    curve.shadowsSaturation = -100;
-
+    curve.shadowsDensity = 100;
+    curve.shadowsSaturation = 100;
+    
     defaultPipeline.imageProcessing.colorCurves = curve;
 
-    defaultPipeline.imageProcessing.contrast = 4;
-    defaultPipeline.imageProcessing.exposure = 1;
+    defaultPipeline.imageProcessing.contrast = 1.2;
+    defaultPipeline.imageProcessing.exposure = 5;
+    
 
     defaultPipeline.bloomEnabled = true;
     defaultPipeline.bloomKernel = 32;
     defaultPipeline.bloomWeight = 5;
     defaultPipeline.bloomThreshold = 0.5;
-    defaultPipeline.bloomScale = 1;
+    defaultPipeline.bloomScale = 2;
 
     defaultPipeline.chromaticAberrationEnabled = true;
     defaultPipeline.chromaticAberration.aberrationAmount = 100;
@@ -808,21 +811,84 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     defaultPipeline.sharpenEnabled = true;
     defaultPipeline.sharpen.edgeAmount = 10;
     defaultPipeline.sharpen.colorAmount = 1.5;
-    */
+    
+
+    BABYLON.ShaderStore.ShadersStore["customVertexShader"]=
+    `#version 300 es
+    precision highp float;
+
+    // Attributes
+    in vec3 position;
+    in vec2 uv;
+
+    // Uniforms
+    uniform mat4 worldViewProjection;
+
+    // Varying
+    out vec2 vUV;
+
+    void main(void) {
+        gl_Position = worldViewProjection * vec4(position, 1.0);
+        
+        
+        vUV = uv;
+    }`
+
+    BABYLON.ShaderStore.ShadersStore["customFragmentShader"]=
+    `precision highp float;
+
+    varying vec2 vUV;
+    uniform sampler2D textureSampler;
+    uniform float time;
+    float maxDistortion = 0.4; // Adjust this value as needed
+
+    void main(void) 
+    {
+        vec2 uv = vUV - vec2(0.5);
+        float uva = atan(uv.x, uv.y);
+        float uvd = sqrt(dot(uv, uv));
+        // k = negative for pincushion, positive for barrel
+        // float k = sin(time);
+        float k = -0.3 * time;
+        uvd = uvd*(1.0 + k*uvd*uvd);
+        uvd = clamp(uvd, 0.0, maxDistortion);
+
+        gl_FragColor = texture(textureSampler, vec2(0.5) + vec2(sin(uva), cos(uva))*uvd);
+        // gl_FragColor = texture(textureSampler, 0.5 * (uv + uvd * normalize(uv)));
+
+    }`
 
     var standardPipeline = new BABYLON.PostProcessRenderPipeline(engine, "standardPipeline");
 
+    var postProcess = new BABYLON.PostProcess("pincushion", "custom", ["time"], ["textureSampler"], 1, camera);
+    let realistTime = 0;
+    postProcess.onApply = function (effect) {
+        // effect.setTextureSampler("textureSampler", new BABYLON.TextureSampler())
+        effect.setFloat("time", realistTime);
+        // console.log(realistTime)
+    };
     
     var standardSharpen = new BABYLON.SharpenPostProcess("standardSharpen", null, camera);
-    standardSharpen.edgeAmount = 20;
-    standardSharpen.colorAmount = 10;
-    
-    
+    standardSharpen.edgeAmount = 10;
+    standardSharpen.colorAmount = 50;
 
-    var orderedEffects = new BABYLON.PostProcessRenderEffect(engine, "effects", function() { return [standardSharpen] });
+    // var standardBloom = new BABYLON.BloomMergePostProcess("bloomMerge", postProcess, standardSharpen)
+
+    var orderedEffects = new BABYLON.PostProcessRenderEffect(engine, "effects", function() { return [standardSharpen, postProcess] });
     standardPipeline.addEffect(orderedEffects);
     scene.postProcessRenderPipelineManager.addPipeline(standardPipeline);
-    scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("standardPipeline", camera);
+    // scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("standardPipeline", camera);
+
+    // Scene RegisterBeforeRender()
+    scene.registerBeforeRender(()=> {
+        // box1.rotation.x += 0.027;
+        // box1.rotation.y += 0.027;
+    
+        let delta  = engine.getDeltaTime()
+        // box2.rotation.x += 0.0015*delta;
+        // box2.rotation.y += 0.0015*delta;
+        realistTime += 0.00015*delta;
+    });
 
     return scene;
 };
