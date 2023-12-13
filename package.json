@@ -2,7 +2,7 @@
   "name": "friends",
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite --open",
+    "dev": "vite --open --host",
     "build": "tsc && vite build",
     "preview": "tsc && vite build && vite preview --host --open"
   },
@@ -11,10 +11,10 @@
     "src/@types"
   ],
   "devDependencies": {
-    "typescript": "^4.6.2",
-    "vite": "^2.8.6"
+    "typescript": "^4.6.2"
   },
   "dependencies": {
-    "babylonjs": "^6.33.1"
+    "babylonjs": "^6.33.1",
+    "vite": "^5.0.8"
   }
 }
