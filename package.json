@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "babylonjs": "^6.33.1",
+    "howler": "^2.2.4",
     "vite": "^5.0.8"
   }
 }
