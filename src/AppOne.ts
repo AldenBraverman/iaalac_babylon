@@ -764,15 +764,16 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
 
     /*
     var parameters = {
-        // edge_blur: 1.0,
+        // edge_blur: 0.2,
         // chromatic_aberration: 1.0,
         // distortion: 2,
         // etc.
     };
-
-    var lensEffect = new BABYLON.LensRenderingPipeline('lensEffects', parameters, scene, 1.0, camera);
-    lensEffect.edgeDistortion = 1;
     */
+
+    // var lensEffect = new BABYLON.LensRenderingPipeline('lensEffects', parameters, scene, 1.0, [camera]);
+    // lensEffect.edgeDistortion = 1;
+    
 
     // Create default pipeline
     
@@ -848,8 +849,9 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
         float uva = atan(uv.x, uv.y);
         float uvd = sqrt(dot(uv, uv));
         // k = negative for pincushion, positive for barrel
-        // float k = sin(time);
-        float k = -0.3 * time;
+        // float k = 10.0 * sin(time * 10.0) + 100.0;
+        // float k = -0.3 * time;
+        float k = 5.0 * sin(time * 0.3);
         uvd = uvd*(1.0 + k*uvd*uvd);
         uvd = clamp(uvd, 0.0, maxDistortion);
 
@@ -865,6 +867,7 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     postProcess.onApply = function (effect) {
         // effect.setTextureSampler("textureSampler", new BABYLON.TextureSampler())
         effect.setFloat("time", realistTime);
+        // console.log(realistTime);
         // console.log(realistTime)
     };
     
