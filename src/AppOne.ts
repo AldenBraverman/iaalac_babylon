@@ -1,4 +1,8 @@
 import * as BABYLON from 'babylonjs'
+import GUI from 'lil-gui'; 
+
+const gui = new GUI();
+
 export class AppOne {
     engine: BABYLON.Engine;
     scene: BABYLON.Scene;
@@ -14,9 +18,9 @@ export class AppOne {
 
     debug(debugOn: boolean = true) {
         if (debugOn) {
-            // this.scene.debugLayer.show({ overlay: true });
+            this.scene.debugLayer.show({ overlay: true });
         } else {
-            // this.scene.debugLayer.hide();
+            this.scene.debugLayer.hide();
         }
     }
 
@@ -35,7 +39,7 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     var scene = new BABYLON.Scene(engine);
 
     // This creates and positions a free camera (non-mesh)
-    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, -3), scene);
+    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, -8), scene);
     // camera.fov = 269.7;
     // const camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 0, -10), scene);
 
@@ -758,7 +762,7 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
         mainTextureFixedSize: 512,
         blurKernelSize: 32,
     });
-    gl.intensity = 0.05;
+    gl.intensity = 0.32;
     gl.referenceMeshToUseItsOwnMaterial(plane);
     
 
@@ -778,7 +782,7 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     // Create default pipeline
     
     var defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", true, scene, [camera]);
-    
+
     var curve = new BABYLON.ColorCurves();
 
     curve.globalHue = 0; // [0, 360] same for below
@@ -792,27 +796,41 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     curve.shadowsHue = 0;
     curve.shadowsDensity = 100;
     curve.shadowsSaturation = 100;
+
+    curve.midtonesHue = 280; // 30 by default
+    curve.midtonesDensity = 100;
+    curve.midtonesSaturation = -100; // 0 by default
     
+    defaultPipeline.imageProcessingEnabled = true;
     defaultPipeline.imageProcessing.colorCurves = curve;
 
-    defaultPipeline.imageProcessing.contrast = 1.2;
-    defaultPipeline.imageProcessing.exposure = 5;
-    
+    defaultPipeline.imageProcessing.contrast = 1;
+    defaultPipeline.imageProcessing.exposure = 0.4;
+
+    defaultPipeline.imageProcessing.vignetteEnabled = true;
+    defaultPipeline.imageProcessing.vignetteWeight = 1.6;
+    defaultPipeline.imageProcessing.vignetteCameraFov = 2.6;
+    defaultPipeline.imageProcessing.vignetteStretch = 1;
+    defaultPipeline.imageProcessing.vignetteBlendMode = 0;
+    // defaultPipeline.imageProcessing.vignetteBlendMode = ;
+    defaultPipeline.fxaaEnabled = true;
 
     defaultPipeline.bloomEnabled = true;
-    defaultPipeline.bloomKernel = 32;
-    defaultPipeline.bloomWeight = 5;
-    defaultPipeline.bloomThreshold = 0.5;
-    defaultPipeline.bloomScale = 2;
+    defaultPipeline.bloomKernel = 128;
+    defaultPipeline.bloomWeight = 0.4;
+    defaultPipeline.bloomThreshold = 1.77;
+    defaultPipeline.bloomScale = 1;
 
     defaultPipeline.chromaticAberrationEnabled = true;
-    defaultPipeline.chromaticAberration.aberrationAmount = 100;
-    defaultPipeline.chromaticAberration.radialIntensity = 0;
+    defaultPipeline.chromaticAberration.aberrationAmount = 65.30;
+    defaultPipeline.chromaticAberration.radialIntensity = 0.33;
 
     defaultPipeline.sharpenEnabled = true;
-    defaultPipeline.sharpen.edgeAmount = 10;
-    defaultPipeline.sharpen.colorAmount = 1.5;
+    defaultPipeline.sharpen.edgeAmount = 5;
+    defaultPipeline.sharpen.colorAmount = 0.8;
     
+
+
 
     BABYLON.ShaderStore.ShadersStore["customVertexShader"]=
     `#version 300 es
@@ -841,7 +859,7 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     varying vec2 vUV;
     uniform sampler2D textureSampler;
     uniform float time;
-    float maxDistortion = 0.4; // Adjust this value as needed
+    float maxDistortion = 1.5; // Adjust this value as needed
 
     void main(void) 
     {
@@ -851,7 +869,7 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
         // k = negative for pincushion, positive for barrel
         // float k = 10.0 * sin(time * 10.0) + 100.0;
         // float k = -0.3 * time;
-        float k = 5.0 * sin(time * 0.3);
+        float k = -10.0 * sin(0.3 * time);
         uvd = uvd*(1.0 + k*uvd*uvd);
         uvd = clamp(uvd, 0.0, maxDistortion);
 
@@ -877,7 +895,18 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
 
     // var standardBloom = new BABYLON.BloomMergePostProcess("bloomMerge", postProcess, standardSharpen)
 
-    var orderedEffects = new BABYLON.PostProcessRenderEffect(engine, "effects", function() { return [standardSharpen, postProcess] });
+    
+    var vignettePostProcess = new BABYLON.ImageProcessingPostProcess("vignette", 1.0, camera);
+    vignettePostProcess.vignetteWeight = 1.6;
+    vignettePostProcess.vignetteStretch = 1;
+    vignettePostProcess.vignetteCameraFov = 2.6
+    // vignettePostProcess.samples = 4;
+    vignettePostProcess.vignetteBlendMode = 1;
+    // vignettePostProcess.vignetteColor = new BABYLON.Color4(1, 1, 1, 1);
+    vignettePostProcess.vignetteEnabled = true;
+    
+
+    var orderedEffects = new BABYLON.PostProcessRenderEffect(engine, "effects", function() { return [standardSharpen, postProcess, vignettePostProcess] });
     standardPipeline.addEffect(orderedEffects);
     scene.postProcessRenderPipelineManager.addPipeline(standardPipeline);
     // scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("standardPipeline", camera);
