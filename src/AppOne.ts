@@ -1,7 +1,12 @@
 import * as BABYLON from 'babylonjs'
+import { stat } from 'fs';
 import GUI from 'lil-gui'; 
+import Stats from 'stats.js';
 
 const gui = new GUI();
+const stats = new Stats();
+stats.showPanel(0);
+document.body.appendChild(stats.dom);
 
 export class AppOne {
     engine: BABYLON.Engine;
@@ -27,7 +32,9 @@ export class AppOne {
     run() {
         this.debug(true);
         this.engine.runRenderLoop(() => {
+            stats.begin()
             this.scene.render();
+            stats.end()
         });
     }
 
@@ -899,7 +906,7 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
         // console.log(realistTime)
     };
     
-    var standardSharpen = new BABYLON.SharpenPostProcess("standardSharpen", null, camera);
+    var standardSharpen = new BABYLON.SharpenPostProcess("standardSharpen", 0, camera); // null where 0 is
     standardSharpen.edgeAmount = 10;
     standardSharpen.colorAmount = 50;
 
