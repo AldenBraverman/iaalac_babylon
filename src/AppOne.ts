@@ -18,9 +18,9 @@ export class AppOne {
 
     debug(debugOn: boolean = true) {
         if (debugOn) {
-            this.scene.debugLayer.show({ overlay: true });
+            // this.scene.debugLayer.show({ overlay: true });
         } else {
-            this.scene.debugLayer.hide();
+            // this.scene.debugLayer.hide();
         }
     }
 
@@ -67,6 +67,8 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
 
     var nodeMaterial = new BABYLON.NodeMaterial("node");
     nodeMaterial.mode = BABYLON.NodeMaterialModes.Material;
+
+    const shaderFolder = gui.addFolder( 'Shader Uniforms' );
 
     // InputBlock
     var position = new BABYLON.InputBlock("position");
@@ -257,6 +259,7 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     uColorNoiseScale.visibleOnFrame = false;
     uColorNoiseScale.target = 1;
     uColorNoiseScale.value = 6.025;
+    shaderFolder.add(uColorNoiseScale, 'value').min(0).max(10).step(0.001).name('uColorNoiseScale');
     uColorNoiseScale.min = 0;
     uColorNoiseScale.max = 0;
     uColorNoiseScale.isBoolean = false;
@@ -493,6 +496,7 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     uBlackNoiseScale.visibleOnFrame = false;
     uBlackNoiseScale.target = 1;
     uBlackNoiseScale.value = 11.688;
+    shaderFolder.add(uBlackNoiseScale, 'value').min(0).max(50).step(0.001).name('uBlackNoiseScale');
     uBlackNoiseScale.min = 0;
     uBlackNoiseScale.max = 0;
     uBlackNoiseScale.isBoolean = false;
@@ -519,6 +523,7 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     uBlackNoiseExpo.visibleOnFrame = false;
     uBlackNoiseExpo.target = 1;
     uBlackNoiseExpo.value = 0.554;
+    shaderFolder.add(uBlackNoiseExpo, 'value').min(0.001).max(1).step(0.001).name('uBlackNoiseExpo');
     uBlackNoiseExpo.min = 0;
     uBlackNoiseExpo.max = 0;
     uBlackNoiseExpo.isBoolean = false;
@@ -567,6 +572,7 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     uRectangleMaskStrength.visibleOnFrame = false;
     uRectangleMaskStrength.target = 1;
     uRectangleMaskStrength.value = 16.061;
+    shaderFolder.add(uRectangleMaskStrength, 'value').min(0).max(30).step(0.001).name('uRectangleMaskStrength');
     uRectangleMaskStrength.min = 0;
     uRectangleMaskStrength.max = 0;
     uRectangleMaskStrength.isBoolean = false;
@@ -782,10 +788,14 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     // Create default pipeline
     
     var defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", true, scene, [camera]);
+    const defaultPipelineFolder = gui.addFolder( 'Default Pipeline' );
+    defaultPipelineFolder.add(defaultPipeline, 'imageProcessingEnabled').name('Enable Image Processing')
 
     var curve = new BABYLON.ColorCurves();
+    const colorCurveFolder = defaultPipelineFolder.addFolder( 'Color Curves' );
 
     curve.globalHue = 0; // [0, 360] same for below
+    colorCurveFolder.add(curve, 'globalHue').min(0).max(360).step(1).name('Global Hue')
     curve.globalDensity = 0; // [-100, 100]
     curve.globalSaturation = 0; // [-100, 100]
     
