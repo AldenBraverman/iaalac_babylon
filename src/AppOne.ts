@@ -796,59 +796,90 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     
     var defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", true, scene, [camera]);
     const defaultPipelineFolder = gui.addFolder( 'Default Pipeline' );
-    defaultPipelineFolder.add(defaultPipeline, 'imageProcessingEnabled').name('Enable Image Processing')
+    defaultPipelineFolder.add(defaultPipeline, 'imageProcessingEnabled').name('Enable Image Processing');
+    defaultPipelineFolder.add(defaultPipeline,'fxaaEnabled').name('Enable FXAA');
 
     var curve = new BABYLON.ColorCurves();
     const colorCurveFolder = defaultPipelineFolder.addFolder( 'Color Curves' );
 
     curve.globalHue = 0; // [0, 360] same for below
-    colorCurveFolder.add(curve, 'globalHue').min(0).max(360).step(1).name('Global Hue')
+    colorCurveFolder.add(curve, 'globalHue').min(0).max(360).step(1).name('Global Hue');
     curve.globalDensity = 0; // [-100, 100]
+    colorCurveFolder.add(curve, 'globalDensity').min(-100).max(100).step(1).name('Global Density');
     curve.globalSaturation = 0; // [-100, 100]
+    colorCurveFolder.add(curve, 'globalSaturation').min(-100).max(100).step(1).name('Global Saturation');
     
     curve.highlightsHue = 180;
+    colorCurveFolder.add(curve, 'highlightsHue').min(0).max(360).step(1).name('Highlights Hue');
     curve.highlightsDensity = 100;
+    colorCurveFolder.add(curve, 'highlightsDensity').min(-100).max(100).step(1).name('Highlights Density');
     curve.highlightsSaturation = 100;
+    colorCurveFolder.add(curve, 'highlightsSaturation').min(-100).max(100).step(1).name('Highlights Saturation');
     
     curve.shadowsHue = 0;
+    colorCurveFolder.add(curve, 'shadowsHue').min(0).max(360).step(1).name('Shadows Hue');
     curve.shadowsDensity = 100;
+    colorCurveFolder.add(curve, 'shadowsDensity').min(-100).max(100).step(1).name('Shadows Density');
     curve.shadowsSaturation = 100;
+    colorCurveFolder.add(curve, 'shadowsSaturation').min(-100).max(100).step(1).name('Shadows Saturation');
 
     curve.midtonesHue = 280; // 30 by default
+    colorCurveFolder.add(curve, 'midtonesHue').min(0).max(360).step(1).name('Midtones Hue');
     curve.midtonesDensity = 100;
+    colorCurveFolder.add(curve, 'midtonesDensity').min(-100).max(100).step(1).name('Midtones Density');
     curve.midtonesSaturation = -100; // 0 by default
+    colorCurveFolder.add(curve, 'midtonesSaturation').min(-100).max(100).step(1).name('Midtones Saturation');
     
     defaultPipeline.imageProcessingEnabled = true;
     defaultPipeline.imageProcessing.colorCurves = curve;
 
+    const contrastExposureFolder = defaultPipelineFolder.addFolder( 'Contrast/Exposure' );
     defaultPipeline.imageProcessing.contrast = 1;
+    contrastExposureFolder.add(defaultPipeline.imageProcessing, 'contrast').min(0).max(5).step(0.1).name('Contrast');
     defaultPipeline.imageProcessing.exposure = 0.4;
+    contrastExposureFolder.add(defaultPipeline.imageProcessing, 'exposure').min(0).max(5).step(0.1).name('Exposure');
 
+    const vignetteFolder = defaultPipelineFolder.addFolder( 'Vignette' );
     defaultPipeline.imageProcessing.vignetteEnabled = true;
+    vignetteFolder.add(defaultPipeline.imageProcessing,'vignetteEnabled').name('Enable Vignette');
     defaultPipeline.imageProcessing.vignetteWeight = 1.6;
+    vignetteFolder.add(defaultPipeline.imageProcessing, 'vignetteWeight').min(0).max(5).step(0.1).name('Vignette Weight');
     defaultPipeline.imageProcessing.vignetteCameraFov = 2.6;
+    vignetteFolder.add(defaultPipeline.imageProcessing, 'vignetteCameraFov').min(0).max(5).step(0.1).name('Vignette FOV');
     defaultPipeline.imageProcessing.vignetteStretch = 1;
+    vignetteFolder.add(defaultPipeline.imageProcessing, 'vignetteStretch').min(0).max(5).step(0.1).name('Vignette Stretch');
     defaultPipeline.imageProcessing.vignetteBlendMode = 0;
     // defaultPipeline.imageProcessing.vignetteBlendMode = ;
     defaultPipeline.fxaaEnabled = true;
 
+    const bloomFolder = defaultPipelineFolder.addFolder( 'Bloom' );
     defaultPipeline.bloomEnabled = true;
+    bloomFolder.add(defaultPipeline,'bloomEnabled').name('Enable Bloom');
     defaultPipeline.bloomKernel = 128;
+    bloomFolder.add(defaultPipeline, 'bloomKernel').min(64).max(2048).step(64).name('Bloom Kernel');
     defaultPipeline.bloomWeight = 0.4;
+    bloomFolder.add(defaultPipeline, 'bloomWeight').min(0).max(2).step(0.1).name('Bloom Weight');
     defaultPipeline.bloomThreshold = 1.77;
+    bloomFolder.add(defaultPipeline, 'bloomThreshold').min(0).max(2).step(0.1).name('Bloom Threshold');
     defaultPipeline.bloomScale = 1;
+    bloomFolder.add(defaultPipeline, 'bloomScale').min(0).max(2).step(0.1).name('Bloom Scale');
 
+    const chromaticAberrationFolder = defaultPipelineFolder.addFolder( 'Chromatic Aberration' );
     defaultPipeline.chromaticAberrationEnabled = true;
+    chromaticAberrationFolder.add(defaultPipeline,'chromaticAberrationEnabled').name('Enable Chromatic Aberration');
     defaultPipeline.chromaticAberration.aberrationAmount = 65.30;
+    chromaticAberrationFolder.add(defaultPipeline.chromaticAberration,'aberrationAmount').min(0).max(100).step(0.1).name('Aberration Amount');
     defaultPipeline.chromaticAberration.radialIntensity = 0.33;
+    chromaticAberrationFolder.add(defaultPipeline.chromaticAberration,'radialIntensity').min(0).max(1).step(0.01).name('Radial Intensity');
 
+    const sharpenFolder = defaultPipelineFolder.addFolder( 'Sharpen' );
     defaultPipeline.sharpenEnabled = true;
+    sharpenFolder.add(defaultPipeline, 'sharpenEnabled').name('Sharpen Enabled');
     defaultPipeline.sharpen.edgeAmount = 5;
+    sharpenFolder.add(defaultPipeline.sharpen, 'edgeAmount').min(0).max(20).step(0.1).name('Sharpen Edge');
     defaultPipeline.sharpen.colorAmount = 0.8;
+    sharpenFolder.add(defaultPipeline.sharpen, 'edgeAmount').min(0).max(1).step(0.01).name('Sharpen Color Amount');
     
-
-
-
     BABYLON.ShaderStore.ShadersStore["customVertexShader"]=
     `#version 300 es
     precision highp float;
