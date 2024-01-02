@@ -56,7 +56,7 @@ Player.prototype = {
       sound = data.howl;
     } else {
       sound = data.howl = new Howl({
-        src: ['./src/audio/' + data.file + '.webm', './src/audio/' + data.file + '.mp3'],
+        src: ['./audio/' + data.file + '.mp3'],
         html5: true, // Force to HTML5 so that the audio can stream in (best for large files).
         onplay: function() {
           // Display the duration.
