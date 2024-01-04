@@ -4,6 +4,7 @@ import GUI from 'lil-gui';
 import Stats from 'stats.js';
 
 const gui = new GUI();
+gui.close();
 const stats = new Stats();
 stats.showPanel(0);
 document.body.appendChild(stats.dom);
@@ -265,7 +266,7 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     uColorNoiseScale.visibleInInspector = false;
     uColorNoiseScale.visibleOnFrame = false;
     uColorNoiseScale.target = 1;
-    uColorNoiseScale.value = 6.025;
+    uColorNoiseScale.value = 10;
     shaderFolder.add(uColorNoiseScale, 'value').min(0).max(10).step(0.001).name('uColorNoiseScale');
     uColorNoiseScale.min = 0;
     uColorNoiseScale.max = 0;
@@ -502,7 +503,7 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     uBlackNoiseScale.visibleInInspector = false;
     uBlackNoiseScale.visibleOnFrame = false;
     uBlackNoiseScale.target = 1;
-    uBlackNoiseScale.value = 11.688;
+    uBlackNoiseScale.value = 12.876;
     shaderFolder.add(uBlackNoiseScale, 'value').min(0).max(50).step(0.001).name('uBlackNoiseScale');
     uBlackNoiseScale.min = 0;
     uBlackNoiseScale.max = 0;
@@ -529,7 +530,7 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     uBlackNoiseExpo.visibleInInspector = false;
     uBlackNoiseExpo.visibleOnFrame = false;
     uBlackNoiseExpo.target = 1;
-    uBlackNoiseExpo.value = 0.554;
+    uBlackNoiseExpo.value = 1;
     shaderFolder.add(uBlackNoiseExpo, 'value').min(0.001).max(1).step(0.001).name('uBlackNoiseExpo');
     uBlackNoiseExpo.min = 0;
     uBlackNoiseExpo.max = 0;
@@ -578,7 +579,7 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     uRectangleMaskStrength.visibleInInspector = false;
     uRectangleMaskStrength.visibleOnFrame = false;
     uRectangleMaskStrength.target = 1;
-    uRectangleMaskStrength.value = 16.061;
+    uRectangleMaskStrength.value = 5.455;
     shaderFolder.add(uRectangleMaskStrength, 'value').min(0).max(30).step(0.001).name('uRectangleMaskStrength');
     uRectangleMaskStrength.min = 0;
     uRectangleMaskStrength.max = 0;
@@ -797,6 +798,7 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     var defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", true, scene, [camera]);
     const defaultPipelineFolder = gui.addFolder( 'Default Pipeline' );
     defaultPipelineFolder.add(defaultPipeline, 'imageProcessingEnabled').name('Enable Image Processing');
+    defaultPipeline.fxaaEnabled = true;
     defaultPipelineFolder.add(defaultPipeline,'fxaaEnabled').name('Enable FXAA');
 
     var curve = new BABYLON.ColorCurves();
@@ -834,51 +836,55 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     defaultPipeline.imageProcessing.colorCurves = curve;
 
     const contrastExposureFolder = defaultPipelineFolder.addFolder( 'Contrast/Exposure' );
-    defaultPipeline.imageProcessing.contrast = 1;
+    contrastExposureFolder.close();
+    defaultPipeline.imageProcessing.contrast = 3.7;
     contrastExposureFolder.add(defaultPipeline.imageProcessing, 'contrast').min(0).max(5).step(0.1).name('Contrast');
-    defaultPipeline.imageProcessing.exposure = 0.4;
+    defaultPipeline.imageProcessing.exposure = 3.3;
     contrastExposureFolder.add(defaultPipeline.imageProcessing, 'exposure').min(0).max(5).step(0.1).name('Exposure');
 
     const vignetteFolder = defaultPipelineFolder.addFolder( 'Vignette' );
+    vignetteFolder.close();
     defaultPipeline.imageProcessing.vignetteEnabled = true;
     vignetteFolder.add(defaultPipeline.imageProcessing,'vignetteEnabled').name('Enable Vignette');
-    defaultPipeline.imageProcessing.vignetteWeight = 1.6;
+    defaultPipeline.imageProcessing.vignetteWeight = 2.4;
     vignetteFolder.add(defaultPipeline.imageProcessing, 'vignetteWeight').min(0).max(5).step(0.1).name('Vignette Weight');
-    defaultPipeline.imageProcessing.vignetteCameraFov = 2.6;
+    defaultPipeline.imageProcessing.vignetteCameraFov = 1.8;
     vignetteFolder.add(defaultPipeline.imageProcessing, 'vignetteCameraFov').min(0).max(5).step(0.1).name('Vignette FOV');
-    defaultPipeline.imageProcessing.vignetteStretch = 1;
+    defaultPipeline.imageProcessing.vignetteStretch = 0;
     vignetteFolder.add(defaultPipeline.imageProcessing, 'vignetteStretch').min(0).max(5).step(0.1).name('Vignette Stretch');
     defaultPipeline.imageProcessing.vignetteBlendMode = 0;
     // defaultPipeline.imageProcessing.vignetteBlendMode = ;
-    defaultPipeline.fxaaEnabled = true;
 
     const bloomFolder = defaultPipelineFolder.addFolder( 'Bloom' );
+    bloomFolder.close();
     defaultPipeline.bloomEnabled = true;
     bloomFolder.add(defaultPipeline,'bloomEnabled').name('Enable Bloom');
-    defaultPipeline.bloomKernel = 128;
+    defaultPipeline.bloomKernel = 192;
     bloomFolder.add(defaultPipeline, 'bloomKernel').min(64).max(2048).step(64).name('Bloom Kernel');
-    defaultPipeline.bloomWeight = 0.4;
+    defaultPipeline.bloomWeight = 0.3;
     bloomFolder.add(defaultPipeline, 'bloomWeight').min(0).max(2).step(0.1).name('Bloom Weight');
-    defaultPipeline.bloomThreshold = 1.77;
+    defaultPipeline.bloomThreshold = 1.6;
     bloomFolder.add(defaultPipeline, 'bloomThreshold').min(0).max(2).step(0.1).name('Bloom Threshold');
-    defaultPipeline.bloomScale = 1;
+    defaultPipeline.bloomScale = 1.6;
     bloomFolder.add(defaultPipeline, 'bloomScale').min(0).max(2).step(0.1).name('Bloom Scale');
 
     const chromaticAberrationFolder = defaultPipelineFolder.addFolder( 'Chromatic Aberration' );
+    chromaticAberrationFolder.close();
     defaultPipeline.chromaticAberrationEnabled = true;
     chromaticAberrationFolder.add(defaultPipeline,'chromaticAberrationEnabled').name('Enable Chromatic Aberration');
-    defaultPipeline.chromaticAberration.aberrationAmount = 65.30;
+    defaultPipeline.chromaticAberration.aberrationAmount = 59;
     chromaticAberrationFolder.add(defaultPipeline.chromaticAberration,'aberrationAmount').min(0).max(100).step(0.1).name('Aberration Amount');
-    defaultPipeline.chromaticAberration.radialIntensity = 0.33;
+    defaultPipeline.chromaticAberration.radialIntensity = 1;
     chromaticAberrationFolder.add(defaultPipeline.chromaticAberration,'radialIntensity').min(0).max(1).step(0.01).name('Radial Intensity');
 
     const sharpenFolder = defaultPipelineFolder.addFolder( 'Sharpen' );
+    sharpenFolder.close();
     defaultPipeline.sharpenEnabled = true;
     sharpenFolder.add(defaultPipeline, 'sharpenEnabled').name('Sharpen Enabled');
-    defaultPipeline.sharpen.edgeAmount = 5;
+    defaultPipeline.sharpen.edgeAmount = 20;
     sharpenFolder.add(defaultPipeline.sharpen, 'edgeAmount').min(0).max(20).step(0.1).name('Sharpen Edge');
-    defaultPipeline.sharpen.colorAmount = 0.8;
-    sharpenFolder.add(defaultPipeline.sharpen, 'edgeAmount').min(0).max(1).step(0.01).name('Sharpen Color Amount');
+    defaultPipeline.sharpen.colorAmount = 0.02;
+    sharpenFolder.add(defaultPipeline.sharpen, 'colorAmount').min(0).max(1).step(0.01).name('Sharpen Color Amount');
     
     BABYLON.ShaderStore.ShadersStore["customVertexShader"]=
     `#version 300 es
@@ -908,6 +914,8 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     uniform sampler2D textureSampler;
     uniform float time;
     float maxDistortion = 1.5; // Adjust this value as needed
+    uniform float uPinCushionAmplitude;
+    uniform float uPinCushionFrequency;
 
     void main(void) 
     {
@@ -917,7 +925,8 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
         // k = negative for pincushion, positive for barrel
         // float k = 10.0 * sin(time * 10.0) + 100.0;
         // float k = -0.3 * time;
-        float k = -10.0 * sin(0.3 * time);
+        // float k = -10.0 * sin(0.3 * time);
+        float k = uPinCushionAmplitude * sin(uPinCushionFrequency * time);
         uvd = uvd*(1.0 + k*uvd*uvd);
         uvd = clamp(uvd, 0.0, maxDistortion);
 
@@ -928,14 +937,19 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
 
     var standardPipeline = new BABYLON.PostProcessRenderPipeline(engine, "standardPipeline");
 
-    var postProcess = new BABYLON.PostProcess("pincushion", "custom", ["time"], ["textureSampler"], 1, camera);
+    var postProcess = new BABYLON.PostProcess("pincushion", "custom", ["time", "uPinCushionAmplitude", "uPinCushionFrequency"], ["textureSampler"], 1, camera);
     let realistTime = 0;
     postProcess.onApply = function (effect) {
         // effect.setTextureSampler("textureSampler", new BABYLON.TextureSampler())
         effect.setFloat("time", realistTime);
-        // console.log(realistTime);
         // console.log(realistTime)
+        effect.setFloat('uPinCushionAmplitude', pincushionSettings.amplitude);
+        effect.setFloat('uPinCushionFrequency', pincushionSettings.frequency);
     };
+
+    var pincushionSettings = { amplitude: -10.0, frequency: 0.3 };
+    shaderFolder.add(pincushionSettings, 'amplitude').min(-25.0).max(25.0).step(1.0).name('pincushion amplitude');
+    shaderFolder.add(pincushionSettings, 'frequency').min(0.1).max(10.0).step(0.1).name('pincushion frequency');
     
     var standardSharpen = new BABYLON.SharpenPostProcess("standardSharpen", 0, camera); // null where 0 is
     standardSharpen.edgeAmount = 10;
