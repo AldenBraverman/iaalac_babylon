@@ -800,35 +800,35 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     defaultPipelineFolder.add(defaultPipeline,'fxaaEnabled').name('Enable FXAA');
 
     var curve = new BABYLON.ColorCurves();
-    const colorCurveFolder = defaultPipelineFolder.addFolder( 'Color Curves' );
+    // const colorCurveFolder = defaultPipelineFolder.addFolder( 'Color Curves' );
 
     curve.globalHue = 0; // [0, 360] same for below
-    colorCurveFolder.add(curve, 'globalHue').min(0).max(360).step(1).name('Global Hue');
+    // colorCurveFolder.add(curve, 'globalHue').min(0).max(360).step(1).name('Global Hue');
     curve.globalDensity = 0; // [-100, 100]
-    colorCurveFolder.add(curve, 'globalDensity').min(-100).max(100).step(1).name('Global Density');
+    // colorCurveFolder.add(curve, 'globalDensity').min(-100).max(100).step(1).name('Global Density');
     curve.globalSaturation = 0; // [-100, 100]
-    colorCurveFolder.add(curve, 'globalSaturation').min(-100).max(100).step(1).name('Global Saturation');
+    // colorCurveFolder.add(curve, 'globalSaturation').min(-100).max(100).step(1).name('Global Saturation');
     
     curve.highlightsHue = 180;
-    colorCurveFolder.add(curve, 'highlightsHue').min(0).max(360).step(1).name('Highlights Hue');
+    // colorCurveFolder.add(curve, 'highlightsHue').min(0).max(360).step(1).name('Highlights Hue');
     curve.highlightsDensity = 100;
-    colorCurveFolder.add(curve, 'highlightsDensity').min(-100).max(100).step(1).name('Highlights Density');
+    // colorCurveFolder.add(curve, 'highlightsDensity').min(-100).max(100).step(1).name('Highlights Density');
     curve.highlightsSaturation = 100;
-    colorCurveFolder.add(curve, 'highlightsSaturation').min(-100).max(100).step(1).name('Highlights Saturation');
+    // colorCurveFolder.add(curve, 'highlightsSaturation').min(-100).max(100).step(1).name('Highlights Saturation');
     
     curve.shadowsHue = 0;
-    colorCurveFolder.add(curve, 'shadowsHue').min(0).max(360).step(1).name('Shadows Hue');
+    // colorCurveFolder.add(curve, 'shadowsHue').min(0).max(360).step(1).name('Shadows Hue');
     curve.shadowsDensity = 100;
-    colorCurveFolder.add(curve, 'shadowsDensity').min(-100).max(100).step(1).name('Shadows Density');
+    // colorCurveFolder.add(curve, 'shadowsDensity').min(-100).max(100).step(1).name('Shadows Density');
     curve.shadowsSaturation = 100;
-    colorCurveFolder.add(curve, 'shadowsSaturation').min(-100).max(100).step(1).name('Shadows Saturation');
+    // colorCurveFolder.add(curve, 'shadowsSaturation').min(-100).max(100).step(1).name('Shadows Saturation');
 
     curve.midtonesHue = 280; // 30 by default
-    colorCurveFolder.add(curve, 'midtonesHue').min(0).max(360).step(1).name('Midtones Hue');
+    // colorCurveFolder.add(curve, 'midtonesHue').min(0).max(360).step(1).name('Midtones Hue');
     curve.midtonesDensity = 100;
-    colorCurveFolder.add(curve, 'midtonesDensity').min(-100).max(100).step(1).name('Midtones Density');
+    // colorCurveFolder.add(curve, 'midtonesDensity').min(-100).max(100).step(1).name('Midtones Density');
     curve.midtonesSaturation = -100; // 0 by default
-    colorCurveFolder.add(curve, 'midtonesSaturation').min(-100).max(100).step(1).name('Midtones Saturation');
+    // colorCurveFolder.add(curve, 'midtonesSaturation').min(-100).max(100).step(1).name('Midtones Saturation');
     
     defaultPipeline.imageProcessingEnabled = true;
     defaultPipeline.imageProcessing.colorCurves = curve;

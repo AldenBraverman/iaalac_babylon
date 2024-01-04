@@ -282,6 +282,21 @@ var player = new Player([
     file: 'flybeat',
     howl: null
   },
+  {
+    title: 'lost_inspiration.mp3',
+    file: 'lost_inspiration',
+    howl: null
+  },
+  {
+    title: 'chipper.mp3',
+    file: 'chipper',
+    howl: null
+  },
+  {
+    title: 'changed_well.mp3',
+    file: 'changed_well',
+    howl: null
+  },
 ]);
 
 // Bind our player controls.
