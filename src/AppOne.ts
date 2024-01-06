@@ -859,7 +859,7 @@ var createScene = function (engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     bloomFolder.close();
     defaultPipeline.bloomEnabled = true;
     bloomFolder.add(defaultPipeline,'bloomEnabled').name('Enable Bloom');
-    defaultPipeline.bloomKernel = 192;
+    defaultPipeline.bloomKernel = 64;
     bloomFolder.add(defaultPipeline, 'bloomKernel').min(64).max(2048).step(64).name('Bloom Kernel');
     defaultPipeline.bloomWeight = 0.3;
     bloomFolder.add(defaultPipeline, 'bloomWeight').min(0).max(2).step(0.1).name('Bloom Weight');
